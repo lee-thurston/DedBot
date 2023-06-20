@@ -45,3 +45,6 @@ C:\Users\lee-t\Desktop\Projects\DedBot\DedBot\DedBot\bin\Debug\netcoreapp3.1\x64
 C:\Users\lee-t\Desktop\Projects\DedBot\DedBot\DedBot\bin\Debug\netcoreapp3.1\x64\tesseract50.dll
 C:\Users\lee-t\Desktop\Projects\DedBot\DedBot\DedBot\bin\Debug\netcoreapp3.1\Tesseract.dll
 C:\Users\lee-t\Desktop\Projects\DedBot\DedBot\DedBot\bin\Debug\netcoreapp3.1\tessdata\eng.traineddata
+C:\Users\lee-t\Desktop\Projects\DedBot\DedBot\DedBot\bin\Debug\netcoreapp3.1\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\lee-t\Desktop\Projects\DedBot\DedBot\DedBot\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Http.dll
+C:\Users\lee-t\Desktop\Projects\DedBot\DedBot\DedBot\bin\Debug\netcoreapp3.1\OpenAI_API.dll

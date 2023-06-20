@@ -44,6 +44,10 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "OpenAI": {
+              "target": "Package",
+              "version": "[1.7.2, )"
+            },
             "Tesseract": {
               "target": "Package",
               "version": "[5.2.0, )"
