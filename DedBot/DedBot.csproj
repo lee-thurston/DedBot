@@ -7,7 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenAI" Version="1.7.2" />
+    <COMReference Include="WMPLib">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>6bf52a50-394a-11d3-b153-00c04f79faa6</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenAI" Version="1.11.0" />
+    <PackageReference Include="SpotifyAPI.Web" Version="7.0.2" />
     <PackageReference Include="Tesseract" Version="5.2.0" />
     <PackageReference Include="TwitchLib" Version="3.5.3" />
   </ItemGroup>
