@@ -2,3 +2,5 @@
 DedBot/obj/
 DedBot/bin/Debug/netcoreapp3.1/DedBot.deps.json
 DedBot/bin/
+ai-image.png
+prompt.txt
