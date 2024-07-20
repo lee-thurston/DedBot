@@ -1,10 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.IO;
 using System.Windows.Forms;
 using Tesseract;
+using TwitchLib.Client;
+using TwitchLib.Client.Models;
+using TwitchLib.Communication.Models;
+using TwitchLib.Communication.Clients;
 
 namespace DedBot
 {
@@ -20,7 +23,7 @@ namespace DedBot
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            var thread = new Thread(bot.twitchClient.onDeath);
+            var thread = new Thread(bot.twitchChatClient.onDeath);
             thread.Start();
         }
     }
@@ -28,19 +31,21 @@ namespace DedBot
     public class Bot
     {
         string channel = "justly";
-        public TwitchChatClient twitchClient;
+        public TwitchChatClient twitchChatClient;
         OpenAIClient openAIClient;
         TwitchPubSubClient pubSubClient;
+        WerewolfController werewolfController;
 
         private System.Windows.Forms.Timer isDeadtimer, hasDiedTimer;
 
         public Bot()
         {
             openAIClient = new OpenAIClient();
-            twitchClient = new TwitchChatClient(channel, openAIClient);
-            pubSubClient = new TwitchPubSubClient(channel, openAIClient, twitchClient);
+            twitchChatClient = new TwitchChatClient(channel, openAIClient);
+            werewolfController = new WerewolfController(channel);
+            pubSubClient = new TwitchPubSubClient(channel, openAIClient, twitchChatClient, werewolfController);
 
-            // resetAI();
+            resetAI();
             Thread thread1 = new Thread(InitTimers);
             thread1.Start();
             
@@ -107,7 +112,7 @@ namespace DedBot
                                 {
                                     bitmap.Save("bill.jpeg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
-                                    var thread = new Thread(twitchClient.onDeath);
+                                    var thread = new Thread(twitchChatClient.onDeath);
                                     thread.Start();
                                     hasDiedTimer.Start();
                                     isDeadtimer.Stop();
@@ -122,7 +127,7 @@ namespace DedBot
         private void resetAI()
         {
             openAIClient.Reset();
-            twitchClient.prompt = File.ReadAllText("prompt.txt");
+            twitchChatClient.prompt = File.ReadAllText("prompt.txt");
         }
     }
 }
