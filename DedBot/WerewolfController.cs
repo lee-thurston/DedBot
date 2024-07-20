@@ -14,13 +14,14 @@ namespace DedBot
     {
         Villager, Werewolf, Doctor, Seer
     }
+
     public class WerewolfPlayer
     {
         public string Id { get; set; }
         public string Name { get; set; }
         public Role Role { get; set; }
         public int Votes { get; set; }
-        public bool hasVoted { get; set; }
+        public bool HasVoted { get; set; }
 
         public WerewolfPlayer(string user) { this.Name = user; }
         
@@ -28,14 +29,14 @@ namespace DedBot
 
     public class WerewolfController
     {
-        string channel;
+        readonly string channel;
         
         public bool gameInProgress = false;
 
-        private TwitchClient twitchClient;
-        private Random rnd;
+        private readonly TwitchClient twitchClient;
+        private readonly Random rnd;
         private bool lookingForWerewolfplayers = false, lookingForPins = false, waitingForPrey = false, waitingForDoctor = false, waitingForSeer = false, waitingForVotes = false;
-        private List<WerewolfPlayer> werewolfplayers;
+        private readonly List<WerewolfPlayer> werewolfplayers;
         private string playerToKill, playerToSave, playerToCheck, seerSuccessPin;
 
         public WerewolfController(string channel)
@@ -60,32 +61,32 @@ namespace DedBot
             twitchClient.Connect();
         }
 
-        public void startWerewolf(string user)
+        public void StartWerewolf(string user)
         {
             gameInProgress = true;
             twitchClient.SendMessage(channel, user + " has started a game of werewolf, type !join to play.");
 
-            bool enoughPlayers = getPlayers(user);
+            bool enoughPlayers = GetPlayers(user);
             if (!enoughPlayers)
             {
                 twitchClient.SendMessage(channel, " Not enough players have entered the game.");
                 return;
             }
 
-            createRoles();
-            createPins();
+            CreateRoles();
+            CreatePins();
 
             twitchClient.SendMessage(channel, "The game is now starting");
 
             while (!GameIsOver())
             {
                 // night time
-                getWerewolfTarget();
-                getDoctorTarget();
-                getSeerTarget();
+                GetWerewolfTarget();
+                GetDoctorTarget();
+                GetSeerTarget();
 
                 // day time
-                killVictim();
+                KillVictim();
 
                 if (GameIsOver())
                 {
@@ -93,8 +94,8 @@ namespace DedBot
                 }
 
                 CheckSeer();
-                waitForVotes();
-                calculateVotes();
+                WaitForVotes();
+                CalculateVotes();
 
                 if (GameIsOver())
                 {
@@ -107,7 +108,7 @@ namespace DedBot
             gameInProgress = false;
         }
 
-        private bool getPlayers(string user)
+        private bool GetPlayers(string user)
         {
             this.lookingForWerewolfplayers = true;
             werewolfplayers.Add(new WerewolfPlayer(user.ToLower()));
@@ -117,7 +118,7 @@ namespace DedBot
             return werewolfplayers.Count > 4;
         }
 
-        private void createRoles()
+        private void CreateRoles()
         {
             int werewolfIndex = rnd.Next(werewolfplayers.Count - 1);
             int doctorIndex = rnd.Next(werewolfplayers.Count - 1);
@@ -139,7 +140,7 @@ namespace DedBot
 
         }
 
-        private void createPins()
+        private void CreatePins()
         {
             twitchClient.SendMessage(channel, "please whisper a random 4 digit code to the bot by typing \"/w youknowwhatactually [phrase]\", the bot will then write a message in the chat telling you your code and your role");
             this.lookingForPins = true;
@@ -147,7 +148,7 @@ namespace DedBot
             this.lookingForPins = false;
         }
 
-        private void getWerewolfTarget()
+        private void GetWerewolfTarget()
         {
             twitchClient.SendMessage(channel, "Werewolf please tell me who you want to kill by typing /w youknowwhatactually [player]. The current players are: " + string.Join(", ", werewolfplayers.Select(x => x.Name).ToList()));
             waitingForPrey = true;
@@ -155,7 +156,7 @@ namespace DedBot
             waitingForPrey = false;
         }
 
-        private void getDoctorTarget()
+        private void GetDoctorTarget()
         {
             twitchClient.SendMessage(channel, "Doctor who you want to save by typing /w youknowwhatactually [player]. The current players are: " + string.Join(", ", werewolfplayers.Select(x => x.Name).ToList()));
             waitingForDoctor = true;
@@ -163,7 +164,7 @@ namespace DedBot
             waitingForDoctor = false;
         }
 
-        private void getSeerTarget()
+        private void GetSeerTarget()
         {
             twitchClient.SendMessage(channel, "Seer tell me who you want to check by typing /w youknowwhatactually [player] [4 digit success pin]. If you correctly check the werewolf, I will send the success pin in chat, otherwise it will be a random pin. The current players are: " + string.Join(", ", werewolfplayers.Select(x => x.Name).ToList()));
             waitingForSeer = true;
@@ -171,7 +172,7 @@ namespace DedBot
             waitingForSeer = false;
         }
 
-        private void killVictim()
+        private void KillVictim()
         {
             if (playerToKill != null)
             {
@@ -231,7 +232,7 @@ namespace DedBot
             return false;
         }
 
-        private void waitForVotes()
+        private void WaitForVotes()
         {
             Thread.Sleep(5000);
             twitchClient.SendMessage(channel, "You now have 3 minutes to vote someone off. To vote someone off type /w youknowwhatactually [player]. if I receive more than 3 votes for a player they will be hanged.  The current players are:" + string.Join(", ", werewolfplayers.Select(x => x.Name).ToList()));
@@ -244,12 +245,12 @@ namespace DedBot
             waitingForVotes = false;
         }
 
-        private void calculateVotes()
+        private void CalculateVotes()
         {
             var maxvotes = 0;
             foreach (var player in werewolfplayers)
             {
-                player.hasVoted = false;
+                player.HasVoted = false;
                 if (player.Votes > maxvotes)
                 {
                     maxvotes = player.Votes;
@@ -287,7 +288,7 @@ namespace DedBot
             // voting someone off
             if (waitingForVotes && sender != null)
             {
-                if (!sender.hasVoted)
+                if (!sender.HasVoted)
                 {
                     WerewolfPlayer target = werewolfplayers.Find(x => e.WhisperMessage.Message.ToLower().Contains(x.Name.ToLower()));
 
@@ -298,7 +299,7 @@ namespace DedBot
                     else
                     {
                         target.Votes++;
-                        sender.hasVoted = true;
+                        sender.HasVoted = true;
                     }
                 }
                 else
@@ -373,7 +374,6 @@ namespace DedBot
             }
             // getting roles
             else if (playerNames.Contains(e.WhisperMessage.Username) && lookingForPins){
-                int result;
 
                 WerewolfPlayer existing = werewolfplayers.Find(x => x.Id == e.WhisperMessage.Message.ToLower());
 
@@ -381,9 +381,8 @@ namespace DedBot
                     twitchClient.SendMessage(channel, e.WhisperMessage.Message + " Pin already in use");
                     return;
                 }
- 
 
-                var valid = Int32.TryParse(e.WhisperMessage.Message, out result);
+                var valid = Int32.TryParse(e.WhisperMessage.Message, out int result);
                 if (e.WhisperMessage.Message.Length != 4 || !valid)
                 {
                     twitchClient.SendMessage(channel, "Pin must be 4 digits");

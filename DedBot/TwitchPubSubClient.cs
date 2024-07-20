@@ -12,11 +12,11 @@ namespace DedBot
 
     class TwitchPubSubClient
     {
-        string channel;
-        TwitchChatClient twitchChatClient;
-        TwitchPubSub pubSubClient;
-        OpenAIClient openAIClient;
-        WerewolfController werewolfController;
+        private readonly string channel;
+        private readonly TwitchChatClient twitchChatClient;
+        private readonly TwitchPubSub pubSubClient;
+        private readonly OpenAIClient openAIClient;
+        private readonly WerewolfController werewolfController;
 
         public TwitchPubSubClient(string channel, OpenAIClient openAIClient, TwitchChatClient twitchChatClient, WerewolfController werewolfController)
         {
@@ -26,16 +26,16 @@ namespace DedBot
             this.werewolfController = werewolfController;
 
             this.pubSubClient = new TwitchPubSub();
-            this.pubSubClient.OnListenResponse += onListenResponse;
-            this.pubSubClient.OnPubSubServiceConnected += onPubSubServiceConnected;
-            this.pubSubClient.OnChannelPointsRewardRedeemed += onChannelPoints;
+            this.pubSubClient.OnListenResponse += OnListenResponse;
+            this.pubSubClient.OnPubSubServiceConnected += OnPubSubServiceConnected;
+            this.pubSubClient.OnChannelPointsRewardRedeemed += OnChannelPoints;
             this.pubSubClient.ListenToFollows("26045144");
             this.pubSubClient.ListenToChannelPoints("26045144");
             this.pubSubClient.OnFollow += OnFollow;
             this.pubSubClient.Connect();
         }
 
-        private void onListenResponse(object sender, OnListenResponseArgs e)
+        private void OnListenResponse(object sender, OnListenResponseArgs e)
         {
             if (!e.Successful)
                 throw new Exception($"Failed to listen! Response: {e.Response}");
@@ -47,12 +47,12 @@ namespace DedBot
             twitchChatClient.SendMessage(response);
         }
 
-        private void onPubSubServiceConnected(object sender, EventArgs e)
+        private void OnPubSubServiceConnected(object sender, EventArgs e)
         {
             var oauth = Environment.GetEnvironmentVariable("topicAuth");
             pubSubClient.SendTopics(oauth);
         }
-        private void onChannelPoints(object sender, OnChannelPointsRewardRedeemedArgs e)
+        private void OnChannelPoints(object sender, OnChannelPointsRewardRedeemedArgs e)
         {
             string user = e.RewardRedeemed.Redemption.User.DisplayName;
             switch (e.RewardRedeemed.Redemption.Reward.Title)
@@ -72,16 +72,16 @@ namespace DedBot
                     break;
                 case "Create an image":
                     new Thread(() => {
-                        this.twitchChatClient.createImage(e.RewardRedeemed.Redemption.User.DisplayName, e.RewardRedeemed.Redemption.UserInput);
+                        this.twitchChatClient.CreateImage(e.RewardRedeemed.Redemption.User.DisplayName, e.RewardRedeemed.Redemption.UserInput);
                     }).Start();
                     break;
                 case "Create TTS":
                     new Thread(() => {
-                        this.twitchChatClient.createTTS(e.RewardRedeemed.Redemption.User.DisplayName, e.RewardRedeemed.Redemption.UserInput);
+                        this.twitchChatClient.CreateTTS(e.RewardRedeemed.Redemption.User.DisplayName, e.RewardRedeemed.Redemption.UserInput);
                     }).Start();
                     break;
                 case "Give someone a timeout":
-                    this.twitchChatClient.createTimeout();
+                    this.twitchChatClient.CreateTimeout();
                     break;
                 case "Let's play werewolf":
                     if (this.werewolfController.gameInProgress)
@@ -91,7 +91,7 @@ namespace DedBot
                     else
                     {
                         new Thread(() => {
-                            this.werewolfController.startWerewolf(user);
+                            this.werewolfController.StartWerewolf(user);
                         }).Start();
                     }
                     break;

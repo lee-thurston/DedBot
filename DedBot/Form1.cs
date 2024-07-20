@@ -19,7 +19,7 @@ namespace DedBot
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            var thread = new Thread(bot.twitchChatClient.onDeath);
+            var thread = new Thread(bot.twitchChatClient.OnDeath);
             thread.Start();
         }
     }
@@ -108,7 +108,7 @@ namespace DedBot
                                 {
                                     bitmap.Save("bill.jpeg", System.Drawing.Imaging.ImageFormat.Jpeg);
 
-                                    var thread = new Thread(twitchChatClient.onDeath);
+                                    var thread = new Thread(twitchChatClient.OnDeath);
                                     thread.Start();
                                     hasDiedTimer.Start();
                                     isDeadtimer.Stop();

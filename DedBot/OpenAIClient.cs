@@ -7,7 +7,7 @@ namespace DedBot
 {
     public class OpenAIClient
     {
-        private OpenAIAPI api;
+        private readonly OpenAIAPI api;
         private Conversation mongoConversation;
         private Conversation conversation;
 
@@ -55,11 +55,13 @@ namespace DedBot
             OpenAI_API.Audio.TextToSpeechRequest bob = new OpenAI_API.Audio.TextToSpeechRequest() { Input = prompt, Voice = "alloy" };
             await this.api.TextToSpeech.SaveSpeechToFileAsync(prompt, "tts.mp3");
             string dir = System.IO.Directory.GetCurrentDirectory();
-            WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer();
-            wplayer.URL = ($"{dir}\\tts");
+            WMPLib.WindowsMediaPlayer wplayer = new WMPLib.WindowsMediaPlayer
+            {
+                URL = ($"{dir}\\tts")
+            };
             wplayer.controls.play();
         }
-
+        
         public async Task DrawImage(string user, string prompt)
         {
             OpenAI_API.Images.ImageGenerationRequest request = new OpenAI_API.Images.ImageGenerationRequest { NumOfImages = 1, Prompt = prompt, Model = "dall-e-3", Quality = "hd" };

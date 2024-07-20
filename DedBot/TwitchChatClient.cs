@@ -14,16 +14,15 @@ namespace DedBot
     
     public class TwitchChatClient
     {
-        string channel;
+        private readonly string channel;
 
-        OpenAIClient OpenAIClient;
+        private readonly OpenAIClient OpenAIClient;
 
-        
         public string prompt;
 
-        private TwitchClient twitchClient;
+        private readonly TwitchClient twitchClient;
         private bool currentlyCreatingimage = false;
-        private List<string> users;
+        private readonly List<string> users;
         
         public TwitchChatClient(string channel, OpenAIClient openAIClient)
         {
@@ -57,11 +56,13 @@ namespace DedBot
             twitchClient.SendMessage(channel, message);
         }
 
-        public void onDeath()
+        public void OnDeath()
         {
             var now = DateTime.Now;
-            var deathTimes = new List<string>(File.ReadAllLinesAsync("deaths.txt").Result);
-            deathTimes.Add(now.ToString());
+            var deathTimes = new List<string>(File.ReadAllLinesAsync("deaths.txt").Result)
+            {
+                now.ToString()
+            };
             File.WriteAllLines("deaths.txt", deathTimes);
             var message = OpenAIClient.SendAndRecieveMessage(prompt, true).Result;
             if (message.Length > 500)
@@ -74,7 +75,7 @@ namespace DedBot
             }
         }
 
-        public async void createImage(string user, string prompt)
+        public async void CreateImage(string user, string prompt)
         {
             if (currentlyCreatingimage)
                 {
@@ -88,14 +89,14 @@ namespace DedBot
                 }
         }
 
-        public void createTTS(string user, string prompt)
+        public void CreateTTS(string user, string prompt)
         {
 
                 twitchClient.SendMessage(channel, "Working on it...");
                 this.OpenAIClient.TTS(user, prompt);
         }
 
-        public void createTimeout()
+        public void CreateTimeout()
         {
             if (users.Count == 0)
             {
@@ -136,7 +137,7 @@ namespace DedBot
                         twitchClient.SendMessage(channel, "Roobie has died " + todayDeaths.Count() + " times today");
                         break;
                     case "adddeath":
-                        onDeath();
+                        OnDeath();
                         break;
                     case "average":
                         if (message.Count() == 2)
