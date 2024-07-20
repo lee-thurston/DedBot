@@ -4,10 +4,6 @@ using System.Threading;
 using System.IO;
 using System.Windows.Forms;
 using Tesseract;
-using TwitchLib.Client;
-using TwitchLib.Client.Models;
-using TwitchLib.Communication.Models;
-using TwitchLib.Communication.Clients;
 
 namespace DedBot
 {
@@ -127,6 +123,7 @@ namespace DedBot
         private void resetAI()
         {
             openAIClient.Reset();
+
             twitchChatClient.prompt = File.ReadAllText("prompt.txt");
         }
     }
