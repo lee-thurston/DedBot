@@ -457,7 +457,9 @@ namespace DedBot
         public void OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
             if (e.ChatMessage.Message.ToLower().StartsWith("!startgame")) {
-                StartWerewolf(e.ChatMessage.Username.ToLower());
+                new Thread(() => {
+                    StartWerewolf(e.ChatMessage.Username.ToLower());
+                }).Start();
             }
 
             if (lookingForWerewolfplayers && e.ChatMessage.Message.ToLower().StartsWith("!join"))
